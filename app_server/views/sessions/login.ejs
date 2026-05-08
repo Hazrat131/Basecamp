@@ -1,0 +1,34 @@
+<div class="auth-card">
+    <h1>Giris</h1>
+    <p class="muted">Hesabiniza daxil olun.</p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-error">
+            <span class="alert-icon">!</span>
+            <%= error %>
+        </div>
+    <% } %>
+
+    <form action="/users/login" method="post" class="form">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<%= (typeof form !== 'undefined' && form.email) || '' %>" required autocomplete="email" autofocus>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Sifre</label>
+            <input type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+
+        <label class="checkbox">
+            <input type="checkbox" name="rememberMe">
+            <span>Meni yadda saxla</span>
+        </label>
+
+        <button type="submit" class="btn btn-block">Daxil ol</button>
+
+        <p class="form-footer muted">
+            Hesabiniz yoxdur? <a href="/users/signup">Qeydiyyatdan kecin</a>
+        </p>
+    </form>
+</div>

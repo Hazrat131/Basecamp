@@ -33,7 +33,9 @@ npm start
 ```
 
 Then open <http://localhost:5000>.
+
 To make the first user an admin, run `npx prisma studio`, open the `users` table, set `is_admin` to `true`. The site admin can edit/delete any project (and is treated as a project admin everywhere).
+
 ## Project admin vs site admin
 
 - **Project admin** — the user who created the project. Can manage members, threads, and any attachment/message inside that project. The site admin is also treated as a project admin on every project.

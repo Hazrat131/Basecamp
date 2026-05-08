@@ -11,7 +11,7 @@ prisma/*.sqlite-journal
 
 .vercel/
 
-sessions/
+
 
 uploads/*
 !uploads/.gitkeep
