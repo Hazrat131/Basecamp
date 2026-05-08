@@ -1,0 +1,39 @@
+<p><a href="/admin" class="back-link">← Panele qayit</a></p>
+
+<div class="page-head">
+    <h1>Bütün layihələr</h1>
+    <span class="muted"><%= projects.length %> layihe</span>
+</div>
+
+<% if (projects.length === 0) { %>
+    <div class="empty-state">
+        <p class="muted">Hele hec bir layihe yoxdur.</p>
+    </div>
+<% } else { %>
+    <div class="proj-grid">
+        <% projects.forEach(function(project) { %>
+            <article class="proj-card">
+                <h3><a href="/projects/<%= project.id %>"><%= project.title %></a></h3>
+                <% if (project.description) { %>
+                    <p class="proj-desc"><%= project.description.length > 140 ? project.description.slice(0, 140) + '…' : project.description %></p>
+                <% } else { %>
+                    <p class="proj-desc muted"><em>(tesvir yoxdur)</em></p>
+                <% } %>
+                <% if (project.createdBy) { %>
+                    <p class="proj-meta">
+                        <a href="/users/<%= project.createdBy.id %>" class="muted small">@<%= project.createdBy.kullaniciAdi %></a>
+                        <span class="muted small">· <%= new Date(project.createdAt).toLocaleDateString('az-AZ') %></span>
+                    </p>
+                <% } %>
+                <div class="proj-actions">
+                    <a href="/projects/<%= project.id %>" class="link-action">bax</a>
+                    <a href="/projects/<%= project.id %>/edit" class="link-action">redakte</a>
+                    <form action="/projects/<%= project.id %>/delete" method="POST" class="inline"
+                          onsubmit="return confirm('Bu layiheni silmeye eminsiniz?')">
+                        <button type="submit" class="link-action danger">sil</button>
+                    </form>
+                </div>
+            </article>
+        <% }) %>
+    </div>
+<% } %>

@@ -1,0 +1,56 @@
+<div class="page-head">
+    <div>
+        <h1>Admin paneli</h1>
+        <p class="muted">Sistem statistikasi və idareetme.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Cemi istifadeciler</div>
+        <div class="stat-value"><%= totalUsers %></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Adminler</div>
+        <div class="stat-value"><%= adminCount %></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Cemi layiheler</div>
+        <div class="stat-value"><%= totalProjects %></div>
+    </div>
+    <div class="stat-card stat-warning">
+        <div class="stat-label">Bloklanmis</div>
+        <div class="stat-value"><%= bannedUsers %></div>
+    </div>
+</div>
+
+<div class="actions-row">
+    <a href="/admin/users" class="btn">İstifadecileri idare et</a>
+    <a href="/admin/projects" class="btn-light">Bütün layiheler</a>
+</div>
+
+<section class="section">
+    <h2>Son qeydiyyatdan kecenler</h2>
+
+    <% if (recentUsers.length === 0) { %>
+        <p class="muted">Hele istifadeci yoxdur.</p>
+    <% } else { %>
+        <ul class="recent-list">
+            <% recentUsers.forEach(function(u) { %>
+                <li>
+                    <div class="recent-avatar">
+                        <%= (u.ad && u.ad[0] ? u.ad[0] : '?').toUpperCase() %>
+                    </div>
+                    <div class="recent-info">
+                        <a href="/users/<%= u.id %>"><strong>@<%= u.kullaniciAdi %></strong></a>
+                        <span class="muted"><%= u.ad %> <%= u.soyad %></span>
+                    </div>
+                    <div>
+                        <% if (u.isAdmin) { %><span class="tag tag-admin">admin</span><% } %>
+                        <% if (u.status === 'banned') { %><span class="tag tag-danger">banned</span><% } %>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</section>

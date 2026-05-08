@@ -1,0 +1,79 @@
+<p>
+    <a href="/projects/<%= project.id %>" class="back-link">← <%= project.title %></a>
+</p>
+
+<article class="thread-detail">
+    <header class="project-detail-head">
+        <h1><%= thread.title %></h1>
+        <p class="muted small">
+            <strong><%= thread.createdBy.kullaniciAdi %></strong> tarafindan yaradildi ·
+            <%= new Date(thread.createdAt).toLocaleDateString('az-AZ') %>
+        </p>
+    </header>
+
+    <% if (thread.description) { %>
+        <div class="project-body">
+            <p><%= thread.description %></p>
+        </div>
+    <% } %>
+
+    <% if (isProjectAdmin) { %>
+        <div class="actions-row">
+            <a href="/projects/<%= project.id %>/threads/<%= thread.id %>/edit" class="btn">Redakte et</a>
+            <form action="/projects/<%= project.id %>/threads/<%= thread.id %>/delete" method="POST" class="inline"
+                  onsubmit="return confirm('Bu muzakireni silmek istediyinize eminsinizmi?')">
+                <button type="submit" class="btn-danger">Sil</button>
+            </form>
+        </div>
+    <% } %>
+</article>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Mesajlar</h2>
+        <span class="muted small"><%= thread.messages.length %></span>
+    </div>
+
+    <% if (thread.messages.length === 0) { %>
+        <p class="muted small"><em>Hele mesaj yoxdur. İlk mesaji siz yazin.</em></p>
+    <% } else { %>
+        <ul class="msg-list">
+            <% thread.messages.forEach(function(msg) { %>
+                <li class="msg-item">
+                    <div class="msg-head">
+                        <span class="avatar"><%= (msg.createdBy.ad || msg.createdBy.kullaniciAdi || '?').charAt(0).toUpperCase() %></span>
+                        <div>
+                            <strong><%= msg.createdBy.kullaniciAdi %></strong>
+                            <span class="muted small">·
+                                <%= new Date(msg.createdAt).toLocaleString('az-AZ') %>
+                                <% if (msg.updatedAt && new Date(msg.updatedAt).getTime() - new Date(msg.createdAt).getTime() > 1000) { %>
+                                    (redakte edilmisdir)
+                                <% } %>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="msg-body"><%= msg.body %></div>
+                    <% if (msg.createdById === currentUserId || isProjectAdmin) { %>
+                        <div class="msg-actions">
+                            <a href="/projects/<%= project.id %>/threads/<%= thread.id %>/messages/<%= msg.id %>/edit" class="link-action">Redakte</a>
+                            <form action="/projects/<%= project.id %>/threads/<%= thread.id %>/messages/<%= msg.id %>/delete" method="POST" class="inline"
+                                  onsubmit="return confirm('Bu mesaji silmek istediyinize eminsinizmi?')">
+                                <button type="submit" class="link-action danger">Sil</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <% if (typeof currentUserId !== 'undefined') { %>
+        <form action="/projects/<%= project.id %>/threads/<%= thread.id %>/messages/new" method="POST" class="msg-form">
+            <input type="hidden" name="_inline" value="1">
+            <textarea name="body" rows="3" maxlength="5000" placeholder="Mesajinizi yazin..." required></textarea>
+            <div class="form-actions">
+                <button type="submit" class="btn">Gonder</button>
+            </div>
+        </form>
+    <% } %>
+</section>

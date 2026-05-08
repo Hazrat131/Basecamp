@@ -1,0 +1,47 @@
+<div class="auth-card">
+    <h1>Qeydiyyat</h1>
+    <p class="muted">Yeni hesab yaradin və layihelerinizi idare etmeye baslayin.</p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-error">
+            <span class="alert-icon">!</span>
+            <%= error %>
+        </div>
+    <% } %>
+
+    <form action="/users/signup" method="post" class="form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="ad">Ad</label>
+                <input type="text" id="ad" name="ad" value="<%= (typeof form !== 'undefined' && form.ad) || '' %>" required minlength="2">
+            </div>
+            <div class="form-group">
+                <label for="soyad">Soyad</label>
+                <input type="text" id="soyad" name="soyad" value="<%= (typeof form !== 'undefined' && form.soyad) || '' %>" required minlength="2">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<%= (typeof form !== 'undefined' && form.email) || '' %>" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+            <label for="username">İstifadeci adi</label>
+            <input type="text" id="username" name="username" value="<%= (typeof form !== 'undefined' && form.username) || '' %>" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.\-]+" autocomplete="username">
+            <small class="hint">3–30 simvol: herf, reqem, _ . -</small>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Sifre</label>
+            <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password">
+            <small class="hint">En azi 6 simvol.</small>
+        </div>
+
+        <button type="submit" class="btn btn-block">Qeydiyyatdan kec</button>
+
+        <p class="form-footer muted">
+            Hesabiniz var? <a href="/users/login">Daxil ol</a>
+        </p>
+    </form>
+</div>

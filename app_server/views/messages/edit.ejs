@@ -1,0 +1,25 @@
+<div class="page-head">
+    <h1>Mesaji redakte et</h1>
+    <a href="/projects/<%= project.id %>/threads/<%= thread.id %>" class="btn-light">← Geri</a>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error">
+        <span class="alert-icon">!</span>
+        <%= error %>
+    </div>
+<% } %>
+
+<div class="form-card">
+    <form action="/projects/<%= project.id %>/threads/<%= thread.id %>/messages/<%= message.id %>/edit" method="POST" class="form">
+        <div class="form-group">
+            <label for="body">Mesaj</label>
+            <textarea id="body" name="body" rows="6" maxlength="5000" required><%= message.body %></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Yadda saxla</button>
+            <a href="/projects/<%= project.id %>/threads/<%= thread.id %>" class="btn-light">Leğv et</a>
+        </div>
+    </form>
+</div>

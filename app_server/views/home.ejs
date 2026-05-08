@@ -1,0 +1,37 @@
+<% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert alert-success">
+        <span class="alert-icon">✓</span>
+        <%= message %>
+    </div>
+<% } %>
+
+<% if (typeof user !== 'undefined' && user) { %>
+    <section class="hero hero-logged-in">
+        <h1>Salam, <%= user.ad %></h1>
+        <p class="lead">
+            <% if (projectCount === 0) { %>
+                Hele hec bir layiheniz yoxdur. İndi baslayaq.
+            <% } else if (projectCount === 1) { %>
+                Sizin <strong>1</strong> aktiv layiheniz var.
+            <% } else { %>
+                Sizin <strong><%= projectCount %></strong> aktiv layiheniz var.
+            <% } %>
+        </p>
+        <div class="hero-actions">
+            <a href="/projects" class="btn">Layihələrim</a>
+            <a href="/projects/new" class="btn btn-light">+ Yeni layihe</a>
+        </div>
+    </section>
+<% } else { %>
+    <section class="hero">
+        <span class="badge">Sade layihe idareciliyi</span>
+        <h1>Layihelerinizi bir yerde saxlayin.</h1>
+
+        <div class="hero-actions">
+            <a href="/users/signup" class="btn btn-lg">Pulsuz qeydiyyat</a>
+            <a href="/users/login" class="btn btn-light btn-lg">Giris</a>
+        </div>
+    </section>
+
+    
+<% } %>

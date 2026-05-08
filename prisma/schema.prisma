@@ -1,0 +1,109 @@
+// Prisma schema — SQLite (file-based, lives in ./prisma/dev.db)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite has no native enums. Status is a plain string: "active" | "banned".
+
+model User {
+  id           Int      @id @default(autoincrement())
+  ad           String?
+  soyad        String?
+  email        String   @unique
+  kullaniciAdi String   @unique @map("kullanici_adi")
+  sifre        String
+  isAdmin      Boolean  @default(false) @map("is_admin")
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  projects    Project[]
+  memberships ProjectMember[]
+  attachments Attachment[]
+  threads     Thread[]
+  messages    Message[]
+
+  @@map("users")
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  createdById Int      @map("created_by_id")
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  members     ProjectMember[]
+  attachments Attachment[]
+  threads     Thread[]
+
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  projectId Int      @map("project_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_members")
+}
+
+model Attachment {
+  id           Int      @id @default(autoincrement())
+  projectId    Int      @map("project_id")
+  uploadedById Int      @map("uploaded_by_id")
+  fileName     String   @map("file_name")
+  storedName   String   @map("stored_name")
+  mimeType     String   @map("mime_type")
+  format       String
+  sizeBytes    Int      @map("size_bytes")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploadedBy User    @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@map("attachments")
+}
+
+model Thread {
+  id          Int      @id @default(autoincrement())
+  projectId   Int      @map("project_id")
+  createdById Int      @map("created_by_id")
+  title       String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@map("threads")
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  threadId    Int      @map("thread_id")
+  createdById Int      @map("created_by_id")
+  body        String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  thread    Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  createdBy User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}

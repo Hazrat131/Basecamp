@@ -1,0 +1,60 @@
+<div class="page-head">
+    <h1>Profil</h1>
+    <a href="/" class="btn-light">← Geri</a>
+</div>
+
+<div class="profile-card">
+    <div class="avatar">
+        <%= (profileUser.ad && profileUser.ad[0] ? profileUser.ad[0] : '?').toUpperCase() %><%= (profileUser.soyad && profileUser.soyad[0] ? profileUser.soyad[0] : '').toUpperCase() %>
+    </div>
+
+    <div class="profile-info">
+        <h2><%= profileUser.ad %> <%= profileUser.soyad %></h2>
+        <p class="muted">@<%= profileUser.kullaniciAdi %></p>
+
+        <div class="badges">
+            <% if (profileUser.isAdmin) { %>
+                <span class="tag tag-admin">Admin</span>
+            <% } else { %>
+                <span class="tag">İstifadeci</span>
+            <% } %>
+            <% if (profileUser.status === 'banned') { %>
+                <span class="tag tag-danger">Bloklanib</span>
+            <% } else { %>
+                <span class="tag tag-ok">Aktiv</span>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<div class="info-grid">
+    <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><%= profileUser.email %></span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">İstifadeci adi</span>
+        <span class="info-value"><%= profileUser.kullaniciAdi %></span>
+    </div>
+    <% if (profileUser._count) { %>
+        <div class="info-row">
+            <span class="info-label">Layiheler</span>
+            <span class="info-value"><%= profileUser._count.projects %></span>
+        </div>
+    <% } %>
+    <div class="info-row">
+        <span class="info-label">Qeydiyyat tarixi</span>
+        <span class="info-value"><%= new Date(profileUser.createdAt).toLocaleDateString('az-AZ') %></span>
+    </div>
+</div>
+
+<div class="actions-row">
+    <% if (isOwnProfile || userRole === 'admin') { %>
+        <form action="/users/<%= profileUser.id %>/delete" method="POST" class="inline"
+              onsubmit="return confirm('Bu hesabi silmeye eminsiniz? Bu emeliyyat geri qaytarila bilmez.')">
+            <button type="submit" class="btn-danger">
+                <%= isOwnProfile ? 'Hesabimi sil' : 'Hesabi sil' %>
+            </button>
+        </form>
+    <% } %>
+</div>

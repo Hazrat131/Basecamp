@@ -1,0 +1,71 @@
+<p><a href="/admin" class="back-link">← Panele qayit</a></p>
+
+<div class="page-head">
+    <h1>İstifadeciler</h1>
+    <span class="muted"><%= users.length %> istifadeci</span>
+</div>
+
+<div class="table-wrap">
+    <table class="data">
+        <thead>
+            <tr>
+                <th>İstifadeci</th>
+                <th>Email</th>
+                <th>Layiheler</th>
+                <th>Rol</th>
+                <th>Status</th>
+                <th>Emeliyyatlar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(function(u) { %>
+                <tr>
+                    <td>
+                        <a href="/users/<%= u.id %>"><strong>@<%= u.kullaniciAdi %></strong></a>
+                        <div class="muted small"><%= u.ad %> <%= u.soyad %></div>
+                    </td>
+                    <td class="muted small"><%= u.email %></td>
+                    <td><%= u._count ? u._count.projects : 0 %></td>
+                    <td>
+                        <% if (u.isAdmin) { %>
+                            <span class="tag tag-admin">admin</span>
+                        <% } else { %>
+                            <span class="tag">user</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (u.status === 'banned') { %>
+                            <span class="tag tag-danger">bloklu</span>
+                        <% } else { %>
+                            <span class="tag tag-ok">aktiv</span>
+                        <% } %>
+                    </td>
+                    <td class="row-actions">
+                        <% if (u.id === currentAdminId) { %>
+                            <span class="muted small">(siz)</span>
+                        <% } else { %>
+                            <% if (u.status !== 'banned') { %>
+                                <form action="/admin/users/<%= u.id %>/role" method="POST" class="inline">
+                                    <button type="submit" class="link-action">
+                                        <%= u.isAdmin ? 'admin sil' : 'admin et' %>
+                                    </button>
+                                </form>
+                            <% } %>
+
+                            <form action="/admin/users/<%= u.id %>/ban" method="POST" class="inline">
+                                <button type="submit" class="link-action <%= u.status === 'banned' ? '' : 'danger' %>">
+                                    <%= u.status === 'banned' ? 'unban' : 'ban' %>
+                                </button>
+                            </form>
+
+                            <form action="/users/<%= u.id %>/delete" method="POST" class="inline"
+                                  onsubmit="return confirm('Bu istifadecini silmeye eminsiniz?')">
+                                <button type="submit" class="link-action danger">sil</button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

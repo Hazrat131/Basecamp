@@ -1,0 +1,67 @@
+<div class="page-head">
+    <div>
+        <h1>Layihələr</h1>
+        <p class="muted">Sizin yaratdiginiz ve uzv oldugunuz butun layiheler.</p>
+    </div>
+    <a href="/projects/new" class="btn">+ Yeni layihe</a>
+</div>
+
+<% if (projects.length === 0 && (!memberOf || memberOf.length === 0)) { %>
+    <div class="empty-state">
+        <h2>Hele hec bir layiheniz yoxdur</h2>
+        <p class="muted">Baslamaq ucun ilk layihenizi yaradin.</p>
+        <a href="/projects/new" class="btn">İlk layiheni yarat</a>
+    </div>
+<% } else { %>
+    <% if (projects.length > 0) { %>
+        <h2 class="section-title">Sizin layiheleriniz</h2>
+        <div class="proj-grid">
+            <% projects.forEach(function(project) { %>
+                <article class="proj-card">
+                    <h3><a href="/projects/<%= project.id %>"><%= project.title %></a></h3>
+                    <% if (project.description) { %>
+                        <p class="proj-desc"><%= project.description.length > 140 ? project.description.slice(0, 140) + '…' : project.description %></p>
+                    <% } else { %>
+                        <p class="proj-desc muted"><em>(tesvir yoxdur)</em></p>
+                    <% } %>
+                    <div class="proj-meta">
+                        <span class="muted small"><%= new Date(project.updatedAt).toLocaleDateString('az-AZ') %></span>
+                    </div>
+                    <div class="proj-actions">
+                        <a href="/projects/<%= project.id %>" class="link-action">Bax</a>
+                        <a href="/projects/<%= project.id %>/edit" class="link-action">Redakte</a>
+                        <form action="/projects/<%= project.id %>/delete" method="POST" class="inline"
+                              onsubmit="return confirm('Bu layihəni silməyə əminsiniz?')">
+                            <button type="submit" class="link-action danger">Sil</button>
+                        </form>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <% if (memberOf && memberOf.length > 0) { %>
+        <h2 class="section-title">Uzv oldugunuz layiheler</h2>
+        <div class="proj-grid">
+            <% memberOf.forEach(function(project) { %>
+                <article class="proj-card">
+                    <h3><a href="/projects/<%= project.id %>"><%= project.title %></a></h3>
+                    <% if (project.description) { %>
+                        <p class="proj-desc"><%= project.description.length > 140 ? project.description.slice(0, 140) + '…' : project.description %></p>
+                    <% } else { %>
+                        <p class="proj-desc muted"><em>(tesvir yoxdur)</em></p>
+                    <% } %>
+                    <div class="proj-meta">
+                        <span class="muted small">
+                            <%= project.createdBy ? project.createdBy.kullaniciAdi : '?' %> ·
+                            <%= new Date(project.updatedAt).toLocaleDateString('az-AZ') %>
+                        </span>
+                    </div>
+                    <div class="proj-actions">
+                        <a href="/projects/<%= project.id %>" class="link-action">Bax</a>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    <% } %>
+<% } %>

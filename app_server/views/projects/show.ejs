@@ -1,0 +1,157 @@
+<p><a href="/projects" class="back-link">← Layihelere qayit</a></p>
+
+<article class="project-detail">
+    <header class="project-detail-head">
+        <h1><%= project.title %></h1>
+        <% if (project.createdBy) { %>
+            <p class="muted small">
+                <strong><%= project.createdBy.kullaniciAdi %></strong> terefinden yaradilib.
+                · <%= new Date(project.createdAt).toLocaleDateString('az-AZ') %>
+                <% if (isProjectAdmin) { %>
+                    · <span class="badge badge-admin">layihe admini</span>
+                <% } %>
+            </p>
+        <% } %>
+    </header>
+
+    <% if (project.description) { %>
+        <div class="project-body">
+            <p><%= project.description %></p>
+        </div>
+    <% } else { %>
+        <p class="muted"><em>(tesvir yoxdur)</em></p>
+    <% } %>
+
+    <% if (isProjectAdmin) { %>
+        <div class="actions-row">
+            <a href="/projects/<%= project.id %>/edit" class="btn">Redakte et</a>
+            <form action="/projects/<%= project.id %>/delete" method="POST" class="inline"
+                  onsubmit="return confirm('Bu layihəni silməyə əminsiniz?')">
+                <button type="submit" class="btn-danger">Sil</button>
+            </form>
+        </div>
+    <% } %>
+</article>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Uzvler</h2>
+        <span class="muted small"><%= project.members.length + 1 %> nefer</span>
+    </div>
+
+    <ul class="member-list">
+        <li class="member-item">
+            <span class="avatar"><%= (project.createdBy.ad || project.createdBy.kullaniciAdi || '?').charAt(0).toUpperCase() %></span>
+            <div class="member-info">
+                <div><strong><%= project.createdBy.kullaniciAdi %></strong> <span class="badge badge-admin">admin</span></div>
+                <div class="muted small"><%= project.createdBy.ad || '' %></div>
+            </div>
+        </li>
+        <% project.members.forEach(function(m) { %>
+            <li class="member-item">
+                <span class="avatar"><%= (m.user.ad || m.user.kullaniciAdi || '?').charAt(0).toUpperCase() %></span>
+                <div class="member-info">
+                    <div><strong><%= m.user.kullaniciAdi %></strong></div>
+                    <div class="muted small"><%= m.user.ad || '' %></div>
+                </div>
+                <% if (isProjectAdmin) { %>
+                    <form action="/projects/<%= project.id %>/members/<%= m.userId %>/remove" method="POST" class="inline"
+                          onsubmit="return confirm('Bu uzvu silmek istediyinize eminsinizmi?')">
+                        <button type="submit" class="link-action danger">Sil</button>
+                    </form>
+                <% } %>
+            </li>
+        <% }) %>
+    </ul>
+
+    <% if (isProjectAdmin) { %>
+        <% if (memberError === 'notfound') { %>
+            <div class="alert alert-error"><span class="alert-icon">!</span>Bu istifadeci tapilmadi.</div>
+        <% } else if (memberError === 'owner') { %>
+            <div class="alert alert-error"><span class="alert-icon">!</span>Layihe sahibi onsuzda admindir.</div>
+        <% } else if (memberError === 'empty') { %>
+            <div class="alert alert-error"><span class="alert-icon">!</span>Istifadeci adi ve ya email daxil edin.</div>
+        <% } %>
+
+        <form action="/projects/<%= project.id %>/members/add" method="POST" class="inline-form">
+            <input type="text" name="identifier" placeholder="Istifadeci adi ve ya email" required>
+            <button type="submit" class="btn">Uzv elave et</button>
+        </form>
+    <% } %>
+</section>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Faylllar</h2>
+        <span class="muted small"><%= attachments.length %> fayl</span>
+    </div>
+
+    <% if (attachError) { %>
+        <div class="alert alert-error"><span class="alert-icon">!</span><%= attachError %></div>
+    <% } %>
+
+    <form action="/projects/<%= project.id %>/attachments" method="POST" enctype="multipart/form-data" class="inline-form">
+        <input type="file" name="file" required accept=".png,.jpg,.jpeg,.gif,.webp,.pdf,.txt">
+        <button type="submit" class="btn">Yukle</button>
+        <span class="muted small">Maksimum 10MB · png/jpg/gif/webp/pdf/txt</span>
+    </form>
+
+    <% if (attachments.length === 0) { %>
+        <p class="muted small" style="margin-top:12px;"><em>Hele fayl yoxdur.</em></p>
+    <% } else { %>
+        <ul class="attach-list">
+            <% attachments.forEach(function(att) { %>
+                <li class="attach-item">
+                    <span class="attach-format format-<%= att.format %>"><%= att.format.toUpperCase() %></span>
+                    <div class="attach-info">
+                        <a href="/projects/<%= project.id %>/attachments/<%= att.id %>/download">
+                            <strong><%= att.fileName %></strong>
+                        </a>
+                        <div class="muted small">
+                            <%= att.uploadedBy.kullaniciAdi %> ·
+                            <%= new Date(att.createdAt).toLocaleDateString('az-AZ') %> ·
+                            <%= (att.sizeBytes / 1024).toFixed(1) %> KB
+                        </div>
+                    </div>
+                    <% if (isProjectAdmin || att.uploadedById === currentUserId) { %>
+                        <form action="/projects/<%= project.id %>/attachments/<%= att.id %>/delete" method="POST" class="inline"
+                              onsubmit="return confirm('Bu fayli silmek istediyinize eminsinizmi?')">
+                            <button type="submit" class="link-action danger">Sil</button>
+                        </form>
+                    <% } %>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</section>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Muzakireler</h2>
+        <% if (isProjectAdmin) { %>
+            <a href="/projects/<%= project.id %>/threads/new" class="btn">+ Yeni muzakire</a>
+        <% } %>
+    </div>
+
+    <% if (threads.length === 0) { %>
+        <p class="muted small"><em>Hele muzakire yoxdur.</em>
+        <% if (isProjectAdmin) { %>İlk muzakireni siz baslayin.<% } %></p>
+    <% } else { %>
+        <ul class="thread-list">
+            <% threads.forEach(function(t) { %>
+                <li class="thread-item">
+                    <div class="thread-info">
+                        <a href="/projects/<%= project.id %>/threads/<%= t.id %>">
+                            <strong><%= t.title %></strong>
+                        </a>
+                        <div class="muted small">
+                            <%= t.createdBy.kullaniciAdi %> ·
+                            <%= new Date(t.createdAt).toLocaleDateString('az-AZ') %> ·
+                            <%= t._count.messages %> mesaj
+                        </div>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</section>
